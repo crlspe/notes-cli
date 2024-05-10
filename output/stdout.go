@@ -2,6 +2,9 @@ package output
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"runtime"
 
 	"github.com/crlspe/notes-cli-v4/model"
 )
@@ -12,3 +15,18 @@ func PrintConsole(items model.ItemList) {
 			item.Id[len(item.Id)-8:], item.Content, item.Type, item.Completed, item.CreatedAt, item.CompletedAt)
 	}
 }
+
+func ClearScreen() {
+	switch runtime.GOOS {
+	case "linux", "darwin":
+		cmd := exec.Command("clear")
+		cmd.Stdout = os.Stdout
+		_ = cmd.Run()
+	case "windows":
+		cmd := exec.Command("cmd", "/c", "cls")
+		cmd.Stdout = os.Stdout
+		_ = cmd.Run()
+	}
+}
+
+

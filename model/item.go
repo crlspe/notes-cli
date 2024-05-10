@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/crlspe/notes-cli-v4/constant"
-	"github.com/crlspe/notes-cli-v4/utils"
+	"github.com/crlspe/notes-cli-v4/input"
 )
 
 type ItemType string
@@ -19,18 +19,12 @@ const (
 type Item struct {
 	Id          string   `json:"id"`
 	Content     string   `json:"content"`
-	Type        ItemType `json:"isTask"`
+	Type        ItemType `json:"type"`
 	Completed   bool     `json:"completed"`
 	CompletedAt string   `json:"completedAt"`
 	CreatedAt   string   `json:"createdAt"`
-}
-
-func (item *Item) Complete(completed bool) {
-	item.Completed = completed
-	item.CompletedAt = ""
-	if completed {
-		item.CompletedAt = time.Now().Format(constant.DateFormat)
-	}
+	Removed     bool     `json:"deleted"`
+	RemovedAt   string   `json:"deletedAt"`
 }
 
 func NewNote(content string) Item {
@@ -41,19 +35,16 @@ func NewTask(content string, completed bool) Item {
 	return NewItem(content, TASK, completed)
 }
 
-func NewItem(
-	content string,
-	itemType ItemType,
-	completed bool) Item {
+func NewItem(content string, itemType ItemType, completed bool) Item {
 
 	if itemType != TASK {
 		itemType = NOTE
 	}
 
-	var id = utils.GenerateId()
+	var id = input.GenerateId()
 	var createdAt = time.Now().Format(constant.DateFormat)
 
-	var completedAt = ""
+	var completedAt = constant.Empty
 	if completed {
 		completedAt = time.Now().Format(constant.DateFormat)
 	}
@@ -77,11 +68,27 @@ func (item Item) Contains(searchTerm string) bool {
 	return strings.Contains(strings.ToLower(item.Content), strings.ToLower(searchTerm))
 }
 
-func (item Item) ContainsAll(searchTerms string) bool {
-	var terms = strings.Split(searchTerms, "|")
+func (item Item) MustContainAll(searchTerms string, separator string) bool {
+	var terms = strings.Split(searchTerms, separator)
 	var containsAll = true
 	for _, term := range terms {
 		containsAll = containsAll && item.Contains(term)
 	}
 	return containsAll
+}
+
+func (item *Item) Complete(completed bool) {
+	item.Completed = completed
+	item.CompletedAt = constant.Empty
+	if completed {
+		item.CompletedAt = time.Now().Format(constant.DateFormat)
+	}
+}
+
+func (item *Item) SetAsRemoved(isDeleted bool) {
+	item.Removed = isDeleted
+	item.RemovedAt = constant.Empty
+	if isDeleted {
+		item.RemovedAt = time.Now().Format(constant.DateFormat)
+	}
 }

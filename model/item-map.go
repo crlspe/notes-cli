@@ -1,6 +1,10 @@
 package model
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/crlspe/notes-cli-v4/constant"
+)
 
 type ItemsMap map[string]Item
 
@@ -45,25 +49,28 @@ func (itemsMap ItemsMap) ToList() ItemList {
 	return items
 }
 
-func (itemsMap ItemsMap) FindAll(searchText string) ItemsMap {
+func (itemsMap ItemsMap) Find(searchText string) ItemsMap {
 
 	if len(strings.TrimSpace(searchText)) <= 0 {
 		return itemsMap
 	}
 
 	var result = make(ItemsMap)
-	var searchTerms = strings.Split(searchText, " ")
+	var searchTerms = strings.Split(searchText, constant.Space)
 
 	for _, searchTerm := range searchTerms {
-		if strings.Contains(searchTerm, "|") {
-			var found = itemsMap.Filter(func(x Item) bool { return x.ContainsAll(searchTerm) })
-			result.AddMap(found)
+		if strings.Contains(searchTerm, constant.Pipe) {
+			result.AddMap(itemsMap.MustContainAll(searchTerm))
 		} else {
 			result.AddMap(itemsMap.Contains(searchTerm))
 		}
 	}
 
 	return result
+}
+
+func (itemsMap ItemsMap) MustContainAll(searchTerm string) ItemsMap {
+	return itemsMap.Filter(func(x Item) bool { return x.MustContainAll(searchTerm, constant.Pipe) })
 }
 
 func (itemsMap ItemsMap) Contains(searchTerm string) ItemsMap {

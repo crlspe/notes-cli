@@ -40,6 +40,17 @@ func (items *ItemList) AddTasks(tasks []string) {
 	}
 }
 
+func (items *ItemList) Remove(toRemove Item) {
+	var index, _ = items.findById(toRemove)
+	*items = append((*items)[:index], (*items)[index+1:]...)
+}
+
+func (items *ItemList) RemoveAll(itemsToRemove ItemList) {
+	for _, item := range itemsToRemove {
+		items.Remove(item)
+	}
+}
+
 func (items ItemList) Print(output func(ItemList)) {
 	output(items)
 }
@@ -52,23 +63,18 @@ func (items *ItemList) Update(updatedItem Item) {
 	fmt.Println(fmt.Sprintln("Item ID:%s Not found!" + updatedItem.Id))
 }
 
-func (items *ItemList) setCompleteAll(selectedItems ItemList, isCompleted bool) ItemList {
-	var itemsUpdated = ItemList{}
-	list := *items
+func (items *ItemList) UpdateAsRemoved(selectedItems ItemList, areRemoved bool) {
+	for _, item := range selectedItems {
+		var index, _ = items.findById(item)
+		(*items)[index].SetAsRemoved(areRemoved)
+	}
+}
+
+func (items *ItemList) SetAsCompleted(selectedItems ItemList, areCompleted bool) {
 	for _, selectedItem := range selectedItems {
 		var index, _ = items.findById(selectedItem)
-		list[index].Complete(isCompleted)
-		itemsUpdated = append(itemsUpdated, list[index])
+		(*items)[index].Complete(areCompleted)
 	}
-	return itemsUpdated
-}
-
-func (items ItemList) CompleteAll(selectedItems ItemList) ItemList {
-	return items.setCompleteAll(selectedItems, true)
-}
-
-func (items ItemList) IncompleteAll(selectedItems ItemList) ItemList {
-	return items.setCompleteAll(selectedItems, false)
 }
 
 func (items ItemList) findById(sItem Item) (int, Item) {
@@ -80,7 +86,7 @@ func (items ItemList) findById(sItem Item) (int, Item) {
 	return -1, Item{}
 }
 
-func (items ItemList) filter(filterFn func(Item) bool) ItemList {
+func (items ItemList) Filter(filterFn func(Item) bool) ItemList {
 	var result = ItemList{}
 	for _, item := range items {
 		if filterFn(item) {
@@ -99,7 +105,7 @@ func (items ItemList) Map(mapFn func(Item) interface{}) []interface{} {
 }
 
 func (items ItemList) getByType(itemType ItemType) ItemList {
-	return items.filter(func(x Item) bool {
+	return items.Filter(func(x Item) bool {
 		return x.Type == itemType
 	})
 }
@@ -113,7 +119,7 @@ func (items ItemList) GetNotes() ItemList {
 }
 
 func (items ItemList) Find(search string) ItemList {
-	return items.filter(func(x Item) bool { return x.Contains(search) })
+	return items.Filter(func(x Item) bool { return x.Contains(search) })
 }
 
 func (items ItemList) ToMap() map[string]Item {

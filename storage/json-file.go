@@ -25,7 +25,7 @@ func (f JsonFile) Save(items model.ItemList) {
 func LoadJsonFile() model.ItemList {
 	var items = model.ItemList{}
 
-	file, _ := os.OpenFile(FilePath, os.O_RDONLY|os.O_CREATE, constant.RWPermissions)
+	file, _ := os.OpenFile(FilePath, os.O_RDONLY|os.O_CREATE, constant.FileRWPermissions)
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)

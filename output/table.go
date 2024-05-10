@@ -2,10 +2,10 @@ package output
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/crlspe/notes-cli-v4/constant"
 	"github.com/crlspe/notes-cli-v4/model"
-	"github.com/crlspe/notes-cli-v4/utils"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
@@ -16,59 +16,99 @@ var NoteColor = text.Colors{text.FgWhite}
 var TaskColor = text.Colors{text.FgCyan}
 
 func PrintShortTable(items model.ItemList) {
-	itemTable := InitializeTableSettings(items)
+	itemTable := initializeTable(items)
 
 	itemTable.AppendHeader(table.Row{
 		" ",
-		utils.Blue("TYPE"),
-		utils.Blue("CONTENT"),
-		utils.Blue("SCOPES"),
+		formatHeader(constant.HeaderType),
+		formatHeader(constant.HeaderContent),
+		formatHeader(constant.HeaderScopes),
 	})
 
 	for _, item := range items {
 		itemTable.AppendRow(table.Row{
-			status(item),
+			formatStatus(item),
 			item.Type,
-			utils.FormatContent(item.Content, 60),
-			utils.FormatScopes(item.Content, 20),
+			formatContent(item.Content),
+			formatScopes(item.Content),
 		})
 	}
-
 	fmt.Println(itemTable.Render())
 	fmt.Println()
 }
 
-func InitializeTableSettings(items model.ItemList) table.Writer {
+func rowPainter(row table.Row) text.Colors {
+	if row[1] == model.TASK {
+		return TaskColor
+	}
+	return NoteColor
+}
+
+func initializeTable(items model.ItemList) table.Writer {
 	var itemTable = table.NewWriter()
 	itemTable.SetStyle(table.StyleRounded)
-	itemTable.SetTitle(
-		fmt.Sprintf("%v %v \nTotal: %v | Notes: %v | Tasks: %v",
-			utils.Black("Notes-cli"),
-			utils.Black(constant.Version),
-			utils.Yellow(len(items)),
-			utils.Yellow(len(items.GetNotes())),
-			utils.Yellow(len(items.GetTasks()))),
-	)
+	itemTable.SetTitle(formatTitle(title(items)))
 	itemTable.SetRowPainter(rowPainter)
 	return itemTable
 }
 
-func rowPainter(row table.Row) text.Colors {
+func formatScopes(content string) string { 
+	var scopes = strings.Join(Get(content,constant.ScopeRE), constant.Space) +
+				 strings.Join(Get(content,constant.TagRE), constant.Space)
+	var scopeFormatter = FormatterList {
+		{ Expression: constant.ScopeRE, Format: Yellow},	
+		{ Expression: constant.TagRE, Format: Magenta},
+		{ Expression: constant.AnyStringRE, Format: WrapContent(20)},
+	}
+	scopeFormatter.Apply(&scopes)
+	return scopes
+}
+
+func formatContent(content string) string {
+	var contentFormatter = FormatterList {
+		{ Expression: constant.ScopeRE, Format: Yellow},
+		{ Expression: constant.TagRE, Format: Magenta},
+		{ Expression: constant.AnyStringRE, Format: TrucateContent(120)},
+		{ Expression: constant.AnyStringRE, Format: WrapContent(60)},
+	}
+	contentFormatter.Apply(&content)
+	return content
+}
+
+func formatHeader(header string) string {
+	var headerFormater = FormatterList{
+		{Expression: constant.AnyStringRE, Format: Blue},
+	}
+	headerFormater.Apply(&header)
+	return header
+}
+
+func formatStatus(item model.Item) string {
 	switch {
-	case row[1] == model.TASK:
-		return TaskColor
+	case item.Type == model.TASK && item.Completed:
+		return Green(constant.TaskCompleted)
+	case item.Type == model.TASK && !item.Completed:
+		return Red(constant.TaskIncompleted)
 	default:
-		return NoteColor
+		return constant.ItemNone
 	}
 }
 
-func status(item model.Item) string {
-	switch {
-	case item.Type == model.TASK && item.Completed:
-		return utils.Green(constant.COMPLETED)
-	case item.Type == model.TASK && !item.Completed:
-		return utils.Red(constant.INCOMPLETED)
-	default:
-		return constant.NONE
+func formatTitle(title string) string {
+	var titleFormater = FormatterList{
+		{Expression: constant.ApplicationName, Format: Green},
+		{Expression: constant.Version, Format: Black},
 	}
+	titleFormater.Apply(&title)
+	return title
 }
+
+func title(items model.ItemList) string {
+	return fmt.Sprint(		
+		constant.ApplicationName, constant.Space, constant.Version, "\n",
+		"Total: ", YellowI(len(items)), " | ",
+		"Notes: ", YellowI(len(items.GetNotes())), " | ",
+		"Tasks: ", YellowI(len(items.GetTasks())),
+	)		
+}
+

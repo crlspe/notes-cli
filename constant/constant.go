@@ -1,14 +1,28 @@
 package constant
 
-const ApplicationName = "Notes-cli"
-const Version = "v4.0.0"
+const ApplicationName = `Notes-cli`
+const Version = `v4.0.0`
 
 const DateFormat = "2006/01/02 15:04:05"
-const RWPermissions = 0644
+
+const FileRWPermissions = 0644
 const FileName = "/notes-cli.json"
 
-const COMPLETED string = "✔"
-const INCOMPLETED string = "✘"
-const NONE string = "✉"
+const TaskCompleted string = "✔"
+const TaskIncompleted string = "✘"
+const ItemNone string = "✉"
 
-const ScopeRegEx = `(?:^|\s)(@\w[-\w.]*(?:\b|,))`
+const ScopeRE = `(?:^|\s)(@\w[-\w.]*(?:\b|,))`
+const TagRE = `(?:^|\s)(#\w[-\w.]*(?:\b|,))`
+const IntegerRE = `\d+`
+const AnyStringRE = `^.*$`
+
+const Space = " "
+const Empty = ""
+const Pipe = "|"
+
+const HeaderType = "TYPE"
+const HeaderContent = "CONTENT"
+const HeaderScopes = "SCOPES"
+
+const AddPrompt = "Add: "
