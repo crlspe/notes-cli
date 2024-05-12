@@ -47,7 +47,7 @@ func rowPainter(row table.Row) text.Colors {
 func initializeTable(items model.ItemList) table.Writer {
 	var itemTable = table.NewWriter()
 	itemTable.SetStyle(table.StyleRounded)
-	itemTable.SetTitle(formatTitle(title(items)))
+	itemTable.SetTitle(title(items))
 	itemTable.SetRowPainter(rowPainter)
 	return itemTable
 }
@@ -77,7 +77,7 @@ func formatContent(content string) string {
 
 func formatHeader(header string) string {
 	var headerFormater = FormatterList{
-		{Expression: constant.AnyStringRE, Format: Blue},
+		{Expression: constant.AnyStringRE, Format: Cyan},
 	}
 	headerFormater.Apply(&header)
 	return header
@@ -94,21 +94,11 @@ func formatStatus(item model.Item) string {
 	}
 }
 
-func formatTitle(title string) string {
-	var titleFormater = FormatterList{
-		{Expression: constant.ApplicationName, Format: Green},
-		{Expression: constant.Version, Format: Black},
-	}
-	titleFormater.Apply(&title)
-	return title
-}
-
 func title(items model.ItemList) string {
 	return fmt.Sprint(		
-		constant.ApplicationName, constant.Space, constant.Version, "\n",
 		"Total: ", YellowI(len(items)), " | ",
-		"Notes: ", YellowI(len(items.GetNotes())), " | ",
-		"Tasks: ", YellowI(len(items.GetTasks())),
+		"N:", YellowI(len(items.GetNotes())), " | ",
+		"T:", YellowI(len(items.GetTasks())),
 	)		
 }
 

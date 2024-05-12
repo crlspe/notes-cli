@@ -7,5 +7,6 @@ import (
 
 func main() {
 	output.ClearScreen()
+	output.PrintApplicationInfo()
 	command.Cli{}.Run()
 }

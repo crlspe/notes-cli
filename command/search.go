@@ -10,11 +10,15 @@ import (
 	"github.com/crlspe/notes-cli-v4/storage"
 )
 
-func SearchItems(flags model.Flags) (model.ItemList, model.ItemList) {
+const SearchPrompt = "search: "
+
+func SearchItems(flags model.Flags) model.ItemList {
 	var items = model.ItemList{}
 	items.Load(storage.LoadJsonFile)
 
-	if !*flags.ShowRemoved {
+	if *flags.ShowRemoved || *flags.Restore {
+		items = items.Filter(func(x model.Item) bool { return x.Removed })
+	} else {
 		items = items.Filter(func(x model.Item) bool { return !x.Removed })
 	}
 
@@ -32,7 +36,7 @@ func SearchItems(flags model.Flags) (model.ItemList, model.ItemList) {
 	// GET INPUT
 	var searchTerm = constant.Empty
 	if len(flags.StringArgs) <= 0 {
-		searchTerm = input.SinglePrompt("search: ")
+		searchTerm = input.SinglePrompt(SearchPrompt)
 	} else {
 		searchTerm = strings.Join(flags.StringArgs, constant.Space)
 	}
@@ -40,5 +44,5 @@ func SearchItems(flags model.Flags) (model.ItemList, model.ItemList) {
 	var itemsFound = selectedItems.Find(searchTerm).ToList()
 	itemsFound.Print(output.PrintShortTable)
 
-	return items, itemsFound
+	return itemsFound
 }

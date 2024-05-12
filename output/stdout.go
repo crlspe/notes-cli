@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/crlspe/notes-cli-v4/constant"
 	"github.com/crlspe/notes-cli-v4/model"
 )
 
@@ -29,4 +30,7 @@ func ClearScreen() {
 	}
 }
 
+func PrintApplicationInfo() {
+	fmt.Println(Green(constant.ApplicationName), constant.Space, Magenta(constant.Version))
+}
 

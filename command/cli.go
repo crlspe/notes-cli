@@ -1,9 +1,13 @@
 package command
 
 import (
+	"github.com/crlspe/notes-cli-v4/input"
 	"github.com/crlspe/notes-cli-v4/model"
 	"github.com/spf13/pflag"
 )
+
+const ConfirmRestore = "Are you sure you want to RESTORE these items Yes/No? "
+const ConfirmPermanentRemove = "Are you sure you want to permanently REMOVE these items Yes/No? "
 
 type Cli struct {
 	Flags model.Flags
@@ -28,7 +32,6 @@ func (cli *Cli) initilize() model.Flags {
 }
 
 func (cli Cli) handleFlags() {
-	var items = model.ItemList{}
 	var selectedItems = model.ItemList{}
 
 	switch {
@@ -37,23 +40,25 @@ func (cli Cli) handleFlags() {
 		AddItems(cli.Flags)
 
 	case *cli.Flags.Search && !*cli.Flags.Add:
-		items, selectedItems = SearchItems(cli.Flags)
+		selectedItems = SearchItems(cli.Flags)
 		fallthrough
 
 	default:
 
 		if *cli.Flags.SetAsCompleted != *cli.Flags.SetAsIncompleted {
-			SetItemsAsCompleted(items, selectedItems, *cli.Flags.SetAsCompleted)
+			SetTaskStatusAs(selectedItems, *cli.Flags.SetAsCompleted)
 		}
 
 		if *cli.Flags.Remove && !*cli.Flags.Restore {
-			//AskforConfirmation
-			RemoveItems(items, selectedItems, *cli.Flags.IsPermanent)
+			if !*cli.Flags.IsPermanent || input.YesOrNoPrompt(ConfirmPermanentRemove) {
+				RemoveItems(selectedItems, *cli.Flags.IsPermanent)
+			}
 		}
 
 		if *cli.Flags.Restore && !*cli.Flags.Remove {
-			//Askfor Confirmation
-			RestoreItems(items, selectedItems)
+			if input.YesOrNoPrompt(ConfirmRestore) {
+				RestoreItems(selectedItems)
+			}
 		}
 	}
 }

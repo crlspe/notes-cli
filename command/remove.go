@@ -5,7 +5,10 @@ import (
 	"github.com/crlspe/notes-cli-v4/storage"
 )
 
-func RemoveItems(items, itemsToRemove model.ItemList, isPermanent bool) {
+func RemoveItems(itemsToRemove model.ItemList, isPermanent bool) {
+	var items = model.ItemList{}
+	items.Load(storage.LoadJsonFile)
+
 	if isPermanent {
 		items.RemoveAll(itemsToRemove)
 	} else {
