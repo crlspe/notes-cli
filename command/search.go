@@ -7,14 +7,12 @@ import (
 	"github.com/crlspe/notes-cli-v4/input"
 	"github.com/crlspe/notes-cli-v4/model"
 	"github.com/crlspe/notes-cli-v4/output"
-	"github.com/crlspe/notes-cli-v4/storage"
 )
 
 const SearchPrompt = "search: "
 
 func SearchItems(flags model.Flags) model.ItemList {
-	var items = model.ItemList{}
-	items.Load(storage.LoadJsonFile)
+	var items = storer.Load()
 
 	if *flags.ShowRemoved || *flags.Restore {
 		items = items.Filter(func(x model.Item) bool { return x.Removed })
@@ -24,7 +22,7 @@ func SearchItems(flags model.Flags) model.ItemList {
 
 	var selectedItems = make(model.ItemsMap)
 
-	// GET TYPE
+	// GET TYPE **FIlter
 	if *flags.IsTask {
 		selectedItems = items.GetTasks().ToMap()
 	} else if *flags.IsNote {

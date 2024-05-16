@@ -12,17 +12,9 @@ import (
 var HomeFolder, _ = os.UserHomeDir()
 var FilePath = HomeFolder + constant.FileName
 
-type JsonFile struct{}
+type JsonFile struct {}
 
-func (f JsonFile) Load() model.ItemList {
-	return LoadJsonFile()
-}
-
-func (f JsonFile) Save(items model.ItemList) {
-	SaveJsonFile(items)
-}
-
-func LoadJsonFile() model.ItemList {
+func (f *JsonFile) Load() model.ItemList {
 	var items = model.ItemList{}
 
 	file, _ := os.OpenFile(FilePath, os.O_RDONLY|os.O_CREATE, constant.FileRWPermissions)
@@ -34,7 +26,7 @@ func LoadJsonFile() model.ItemList {
 	return items
 }
 
-func SaveJsonFile(items model.ItemList) {
+func (f *JsonFile) Save(items model.ItemList) {
 	file, err := os.Create(FilePath)
 
 	if err != nil {

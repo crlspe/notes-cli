@@ -1,24 +1,6 @@
 package model
 
-import (
-	"fmt"
-	"os"
-
-	"github.com/crlspe/notes-cli-v4/constant"
-)
-
-var HomeFolder, _ = os.UserHomeDir()
-var FilePath = HomeFolder + constant.FileName
-
 type ItemList []Item
-
-func (items *ItemList) Load(loadData func() ItemList) ItemList {
-	*items = loadData()
-	return *items
-}
-func (items ItemList) Save(saveData func(ItemList)) {
-	saveData(items)
-}
 
 func (items *ItemList) Add(newItem Item) {
 	*items = append(*items, newItem)
@@ -60,7 +42,6 @@ func (items *ItemList) Update(updatedItem Item) {
 	if idx != -1 {
 		(*items)[idx] = updatedItem
 	}
-	fmt.Println(fmt.Sprintln("Item ID:%s Not found!" + updatedItem.Id))
 }
 
 func (items *ItemList) UpdateAsRemoved(selectedItems ItemList, areRemoved bool) {

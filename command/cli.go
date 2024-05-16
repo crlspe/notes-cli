@@ -3,11 +3,14 @@ package command
 import (
 	"github.com/crlspe/notes-cli-v4/input"
 	"github.com/crlspe/notes-cli-v4/model"
+	"github.com/crlspe/notes-cli-v4/storage"
 	"github.com/spf13/pflag"
 )
 
 const ConfirmRestore = "Are you sure you want to RESTORE these items Yes/No? "
 const ConfirmPermanentRemove = "Are you sure you want to permanently REMOVE these items Yes/No? "
+
+var storer = storage.JsonFile{}
 
 type Cli struct {
 	Flags model.Flags
