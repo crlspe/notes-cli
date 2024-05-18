@@ -33,10 +33,6 @@ func (items *ItemList) RemoveAll(itemsToRemove ItemList) {
 	}
 }
 
-func (items ItemList) Print(output func(ItemList)) {
-	output(items)
-}
-
 func (items *ItemList) Update(updatedItem Item) {
 	var idx, _ = items.findById(updatedItem)
 	if idx != -1 {

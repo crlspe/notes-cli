@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/crlspe/notes-cli-v4/constant"
-	"github.com/crlspe/notes-cli-v4/input"
+	"github.com/crlspe/notes-cli/constant"
+	"github.com/crlspe/notes-cli/input"
 )
 
 type ItemType string

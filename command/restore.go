@@ -1,11 +1,14 @@
 package command
 
 import (
-	"github.com/crlspe/notes-cli-v4/model"
+	"fmt"
+
+	"github.com/crlspe/notes-cli/model"
 )
 
 func RestoreItems(selectedItems model.ItemList) {
 	var items = storer.Load()
 	items.UpdateAsRemoved(selectedItems, false)
 	storer.Save(items)
+	fmt.Printf("Restored %v item(s)", len(selectedItems))
 }

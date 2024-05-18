@@ -1,4 +1,4 @@
-module github.com/crlspe/notes-cli-v4
+module github.com/crlspe/notes-cli
 
 go 1.22.2
 

@@ -1,7 +1,9 @@
 package command
 
 import (
-	"github.com/crlspe/notes-cli-v4/model"
+	"fmt"
+
+	"github.com/crlspe/notes-cli/model"
 )
 
 func RemoveItems(itemsToRemove model.ItemList, isPermanent bool) {
@@ -14,4 +16,5 @@ func RemoveItems(itemsToRemove model.ItemList, isPermanent bool) {
 	}
 
 	storer.Save(items)
+	fmt.Printf("Deleted %v item(s), permanently: %v", len(itemsToRemove), isPermanent)
 }

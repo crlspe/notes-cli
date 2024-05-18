@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/crlspe/notes-cli-v4/command"
-	"github.com/crlspe/notes-cli-v4/output"
+	"github.com/crlspe/notes-cli/command"
+	"github.com/crlspe/notes-cli/output"
 )
 
 func main() {

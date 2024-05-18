@@ -1,11 +1,14 @@
 package command
 
 import (
-	"github.com/crlspe/notes-cli-v4/model"
+	"fmt"
+
+	"github.com/crlspe/notes-cli/model"
 )
 
 func SetTaskStatusAs(selectedItems model.ItemList, areCompleted bool) {
-	var items = storer.Load() 
+	var items = storer.Load()
 	items.SetAsCompleted(selectedItems, areCompleted)
 	storer.Save(items)
+	fmt.Printf("Updated %v item(s) to complete: %v", len(selectedItems), areCompleted)
 }

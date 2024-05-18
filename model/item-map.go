@@ -3,7 +3,7 @@ package model
 import (
 	"strings"
 
-	"github.com/crlspe/notes-cli-v4/constant"
+	"github.com/crlspe/notes-cli/constant"
 )
 
 type ItemsMap map[string]Item

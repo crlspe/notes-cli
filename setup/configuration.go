@@ -1,17 +1,17 @@
 package setup
 
 import (
-	"github.com/crlspe/notes-cli-v4/constant"
-	"github.com/crlspe/notes-cli-v4/model"
-	"github.com/crlspe/notes-cli-v4/output"
-	"github.com/crlspe/notes-cli-v4/storage"
+	"github.com/crlspe/notes-cli/config"
+	"github.com/crlspe/notes-cli/constant"
+	"github.com/crlspe/notes-cli/storage"
 )
 
 type Options struct {
 	ApplicationName string
 	Version         string
-	Storage         storage.IStorage
-	PrintOutput     func(items model.ItemList)
+	Storage         storage.Storer
+	StorageString   string
+	PrintOutput     interface{}
 }
 
 type Configuration struct {
@@ -34,7 +34,8 @@ func defaultConfiguration() Options {
 	return Options{
 		ApplicationName: constant.ApplicationName,
 		Version:         constant.Version,
-		Storage:         storage.JsonFile{},
-		PrintOutput:     output.PrintShortTable,
+		Storage:         &storage.JsonFile{},
+		StorageString:   constant.HomeFolder + constant.FileName,
+		PrintOutput:     config.GetDependency("PrintShortTable"),
 	}
 }

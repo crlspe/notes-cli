@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/crlspe/notes-cli-v4/constant"
-	"github.com/crlspe/notes-cli-v4/model"
+	"github.com/crlspe/notes-cli/constant"
+	"github.com/crlspe/notes-cli/model"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
@@ -52,24 +52,24 @@ func initializeTable(items model.ItemList) table.Writer {
 	return itemTable
 }
 
-func formatScopes(content string) string { 
-	var scopes = strings.Join(Get(content,constant.ScopeRE), constant.Space) +
-				 strings.Join(Get(content,constant.TagRE), constant.Space)
-	var scopeFormatter = FormatterList {
-		{ Expression: constant.ScopeRE, Format: Yellow},	
-		{ Expression: constant.TagRE, Format: Magenta},
-		{ Expression: constant.AnyStringRE, Format: WrapContent(20)},
+func formatScopes(content string) string {
+	var scopes = strings.Join(Get(content, constant.ScopeRE), constant.Space) +
+		strings.Join(Get(content, constant.TagRE), constant.Space)
+	var scopeFormatter = FormatterList{
+		{Expression: constant.ScopeRE, Format: Yellow},
+		{Expression: constant.TagRE, Format: Magenta},
+		{Expression: constant.AnyStringRE, Format: WrapContent(20)},
 	}
 	scopeFormatter.Apply(&scopes)
 	return scopes
 }
 
 func formatContent(content string) string {
-	var contentFormatter = FormatterList {
-		{ Expression: constant.ScopeRE, Format: Yellow},
-		{ Expression: constant.TagRE, Format: Magenta},
-		{ Expression: constant.AnyStringRE, Format: TrucateContent(120)},
-		{ Expression: constant.AnyStringRE, Format: WrapContent(60)},
+	var contentFormatter = FormatterList{
+		{Expression: constant.ScopeRE, Format: Yellow},
+		{Expression: constant.TagRE, Format: Magenta},
+		{Expression: constant.AnyStringRE, Format: TrucateContent(120)},
+		{Expression: constant.AnyStringRE, Format: WrapContent(60)},
 	}
 	contentFormatter.Apply(&content)
 	return content
@@ -95,10 +95,9 @@ func formatStatus(item model.Item) string {
 }
 
 func title(items model.ItemList) string {
-	return fmt.Sprint(		
+	return fmt.Sprint(
 		"Total: ", YellowI(len(items)), " | ",
 		"N:", YellowI(len(items.GetNotes())), " | ",
 		"T:", YellowI(len(items.GetTasks())),
-	)		
+	)
 }
-
