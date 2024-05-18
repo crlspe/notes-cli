@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/crlspe/notes-cli/constant"
+	c "github.com/crlspe/notes-cli/constant"
 	"github.com/crlspe/notes-cli/model"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -19,10 +19,10 @@ func PrintShortTable(items model.ItemList) {
 	itemTable := initializeTable(items)
 
 	itemTable.AppendHeader(table.Row{
-		" ",
-		formatHeader(constant.HeaderType),
-		formatHeader(constant.HeaderContent),
-		formatHeader(constant.HeaderScopes),
+		c.StrSpace,
+		formatHeader(c.HeaderType),
+		formatHeader(c.HeaderContent),
+		formatHeader(c.HeaderScopes),
 	})
 
 	for _, item := range items {
@@ -53,12 +53,12 @@ func initializeTable(items model.ItemList) table.Writer {
 }
 
 func formatScopes(content string) string {
-	var scopes = strings.Join(Get(content, constant.ScopeRE), constant.Space) +
-		strings.Join(Get(content, constant.TagRE), constant.Space)
+	var scopes = strings.Join(Get(content, c.ReScope), c.StrSpace) +
+		strings.Join(Get(content, c.ReTag), c.StrSpace)
 	var scopeFormatter = FormatterList{
-		{Expression: constant.ScopeRE, Format: Yellow},
-		{Expression: constant.TagRE, Format: Magenta},
-		{Expression: constant.AnyStringRE, Format: WrapContent(20)},
+		{Expression: c.ReScope, Format: Yellow},
+		{Expression: c.ReTag, Format: Magenta},
+		{Expression: c.ReAnyString, Format: WrapContent(20)},
 	}
 	scopeFormatter.Apply(&scopes)
 	return scopes
@@ -66,10 +66,10 @@ func formatScopes(content string) string {
 
 func formatContent(content string) string {
 	var contentFormatter = FormatterList{
-		{Expression: constant.ScopeRE, Format: Yellow},
-		{Expression: constant.TagRE, Format: Magenta},
-		{Expression: constant.AnyStringRE, Format: TrucateContent(120)},
-		{Expression: constant.AnyStringRE, Format: WrapContent(60)},
+		{Expression: c.ReScope, Format: Yellow},
+		{Expression: c.ReTag, Format: Magenta},
+		{Expression: c.ReAnyString, Format: TrucateContent(120)},
+		{Expression: c.ReAnyString, Format: WrapContent(60)},
 	}
 	contentFormatter.Apply(&content)
 	return content
@@ -77,7 +77,7 @@ func formatContent(content string) string {
 
 func formatHeader(header string) string {
 	var headerFormater = FormatterList{
-		{Expression: constant.AnyStringRE, Format: Cyan},
+		{Expression: c.ReAnyString, Format: Cyan},
 	}
 	headerFormater.Apply(&header)
 	return header
@@ -86,18 +86,18 @@ func formatHeader(header string) string {
 func formatStatus(item model.Item) string {
 	switch {
 	case item.Type == model.TASK && item.Completed:
-		return Green(constant.TaskCompleted)
+		return Green(c.TaskCompleted)
 	case item.Type == model.TASK && !item.Completed:
-		return Red(constant.TaskIncompleted)
+		return Red(c.TaskIncompleted)
 	default:
-		return constant.ItemNone
+		return c.ItemNone
 	}
 }
 
 func title(items model.ItemList) string {
 	return fmt.Sprint(
-		"Total: ", YellowI(len(items)), " | ",
-		"N:", YellowI(len(items.GetNotes())), " | ",
-		"T:", YellowI(len(items.GetTasks())),
+		c.HTitleTotalCount, YellowI(len(items)), c.HTitleSeparator,
+		c.HTitleNoteCount, YellowI(len(items.GetNotes())), c.HTitleSeparator,
+		c.HTitleTaskCount, YellowI(len(items.GetTasks())),
 	)
 }

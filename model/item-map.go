@@ -56,10 +56,10 @@ func (itemsMap ItemsMap) Find(searchText string) ItemsMap {
 	}
 
 	var result = make(ItemsMap)
-	var searchTerms = strings.Split(searchText, constant.Space)
+	var searchTerms = strings.Split(searchText, constant.StrSpace)
 
 	for _, searchTerm := range searchTerms {
-		if strings.Contains(searchTerm, constant.Pipe) {
+		if strings.Contains(searchTerm, constant.StrPipe) {
 			result.AddMap(itemsMap.MustContainAll(searchTerm))
 		} else {
 			result.AddMap(itemsMap.Contains(searchTerm))
@@ -70,7 +70,7 @@ func (itemsMap ItemsMap) Find(searchText string) ItemsMap {
 }
 
 func (itemsMap ItemsMap) MustContainAll(searchTerm string) ItemsMap {
-	return itemsMap.Filter(func(x Item) bool { return x.MustContainAll(searchTerm, constant.Pipe) })
+	return itemsMap.Filter(func(x Item) bool { return x.MustContainAll(searchTerm, constant.StrPipe) })
 }
 
 func (itemsMap ItemsMap) Contains(searchTerm string) ItemsMap {

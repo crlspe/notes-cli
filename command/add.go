@@ -25,7 +25,7 @@ func AddItems(flags model.Flags) {
 
 func GetAddInput(flags model.Flags) []string {
 	if len(flags.StringArgs) <= 0 {
-		return input.MultiplePrompt(constant.AddPrompt)
+		return input.MultiplePrompt(constant.PromptAdd)
 	}
 	return flags.StringArgs
 }

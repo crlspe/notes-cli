@@ -21,13 +21,12 @@ func readRune() rune {
 	return input
 }
 
-
 func SinglePrompt(label string) string {
 	fmt.Print(text.FgGreen.Sprint(label))
 	return readString()
 }
 
-func YesOrNoPrompt(label string) bool {
+func YesNoPrompt(label string) bool {
 	fmt.Print(text.FgGreen.Sprint(label))
 	var input = readRune()
 	if input == 'y' || input == 'Y' {
@@ -39,12 +38,12 @@ func YesOrNoPrompt(label string) bool {
 func MultiplePromptC(label string, color text.Color) []string {
 	var inputs = []string{}
 	for {
-			fmt.Print(text.FgGreen.Sprint(label))
-			var input = readString()
-			if input == "" {
-				break
-			}
-			inputs = append(inputs, input)
+		fmt.Print(text.FgGreen.Sprint(label))
+		var input = readString()
+		if input == "" {
+			break
+		}
+		inputs = append(inputs, input)
 	}
 	return inputs
 }

@@ -8,8 +8,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const ConfirmRestore = "Are you sure you want to RESTORE these items Yes/No? "
-const ConfirmPermanentRemove = "Are you sure you want to permanently REMOVE these items Yes/No? "
+const confirmRestore = "Are you sure you want to RESTORE these items Yes/No? "
+const confirmRemove = "Are you sure you want to REMOVE these items Yes/No? "
+const confirmPermanentRemove = "Are you sure you want to permanently REMOVE these items Yes/No? "
 
 var storer = storage.JsonFile{}
 
@@ -40,30 +41,27 @@ func (cli Cli) handleFlags() {
 
 	switch {
 
-	case *cli.Flags.Add:
+	case IsAddItems(cli.Flags):
 		AddItems(cli.Flags)
 
-	case *cli.Flags.Search && !*cli.Flags.Add:
+	case IsSearchItems(cli.Flags):
 		selectedItems = SearchItems(cli.Flags)
-		output.PrintShortTable(selectedItems)
 		fallthrough
 
 	default:
 
-		if *cli.Flags.SetAsCompleted != *cli.Flags.SetAsIncompleted {
+		output.PrintShortTable(selectedItems)
+
+		if IsTaskStatusChange(cli.Flags) {
 			SetTaskStatusAs(selectedItems, *cli.Flags.SetAsCompleted)
 		}
 
-		if *cli.Flags.Remove && !*cli.Flags.Restore {
-			if !*cli.Flags.IsPermanent || input.YesOrNoPrompt(ConfirmPermanentRemove) {
-				RemoveItems(selectedItems, *cli.Flags.IsPermanent)
-			}
+		if IsRemoveItems(cli.Flags) {
+			RemoveItems(selectedItems, *cli.Flags.IsPermanent)
 		}
 
-		if *cli.Flags.Restore && !*cli.Flags.Remove {
-			if input.YesOrNoPrompt(ConfirmRestore) {
-				RestoreItems(selectedItems)
-			}
+		if IsRestoreItems(cli.Flags) {
+			RestoreItems(selectedItems)
 		}
 	}
 }
@@ -71,4 +69,36 @@ func (cli Cli) handleFlags() {
 func (cli Cli) Run() {
 	cli.initilize()
 	cli.handleFlags()
+}
+
+func IsAddItems(flags model.Flags) bool {
+	return *flags.Add
+}
+
+func IsSearchItems(flags model.Flags) bool {
+	return *flags.Search && !*flags.Add
+}
+
+func IsTaskStatusChange(flags model.Flags) bool {
+	return *flags.SetAsCompleted != *flags.SetAsIncompleted
+}
+
+func IsRemoveItems(flags model.Flags) bool {
+	return IsRemove(flags) && (IsNotPermanent(flags) || IsPermanent(flags))
+}
+
+func IsRestoreItems(flags model.Flags) bool {
+	return *flags.Restore && !*flags.Remove && input.YesNoPrompt(confirmRestore)
+}
+
+func IsRemove(flags model.Flags) bool {
+	return *flags.Remove && !*flags.Restore
+}
+
+func IsNotPermanent(flags model.Flags) bool {
+	return (!*flags.IsPermanent && input.YesNoPrompt(confirmRemove))
+}
+
+func IsPermanent(flags model.Flags) bool {
+	return (*flags.IsPermanent && input.YesNoPrompt(confirmPermanentRemove))
 }

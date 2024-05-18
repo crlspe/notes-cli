@@ -44,7 +44,7 @@ func NewItem(content string, itemType ItemType, completed bool) Item {
 	var id = input.GenerateId()
 	var createdAt = time.Now().Format(constant.DateFormat)
 
-	var completedAt = constant.Empty
+	var completedAt = constant.StrEmpty
 	if completed {
 		completedAt = time.Now().Format(constant.DateFormat)
 	}
@@ -79,7 +79,7 @@ func (item Item) MustContainAll(searchTerms string, separator string) bool {
 
 func (item *Item) Complete(completed bool) {
 	item.Completed = completed
-	item.CompletedAt = constant.Empty
+	item.CompletedAt = constant.StrEmpty
 	if completed {
 		item.CompletedAt = time.Now().Format(constant.DateFormat)
 	}
@@ -87,7 +87,7 @@ func (item *Item) Complete(completed bool) {
 
 func (item *Item) SetAsRemoved(isDeleted bool) {
 	item.Removed = isDeleted
-	item.RemovedAt = constant.Empty
+	item.RemovedAt = constant.StrEmpty
 	if isDeleted {
 		item.RemovedAt = time.Now().Format(constant.DateFormat)
 	}

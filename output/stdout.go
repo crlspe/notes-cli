@@ -31,5 +31,5 @@ func ClearScreen() {
 }
 
 func PrintApplicationInfo() {
-	fmt.Println(Green(constant.ApplicationName), constant.Space, Magenta(constant.Version))
+	fmt.Println(Green(constant.ApplicationName), constant.StrSpace, Magenta(constant.Version))
 }

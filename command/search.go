@@ -42,8 +42,8 @@ func applyTypeFilters(items *model.ItemList, flags model.Flags) {
 func GetSearchInput(flags model.Flags) string {
 	switch {
 	case len(flags.StringArgs) <= 0:
-		return input.SinglePrompt(constant.SearchPrompt)
+		return input.SinglePrompt(constant.PromptSearch)
 	default:
-		return strings.Join(flags.StringArgs, constant.Space)
+		return strings.Join(flags.StringArgs, constant.StrSpace)
 	}
 }
