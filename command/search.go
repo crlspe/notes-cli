@@ -14,9 +14,8 @@ func SearchItems(flags model.Flags) model.ItemList {
 	applyTypeFilters(&items, flags)
 
 	var selectedItems model.ItemsMap = items.ToMap()
-	var itemsFound = selectedItems.Find(GetSearchInput(flags)).ToList()
 
-	return itemsFound
+	return selectedItems.Find(GetSearchInput(flags)).ToList()
 }
 
 func applyFlagFilters(items *model.ItemList, flags model.Flags) {
